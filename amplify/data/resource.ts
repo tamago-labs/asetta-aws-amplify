@@ -16,12 +16,15 @@ const schema = a.schema({
       dateOfBirth: a.date(),
       nationality: a.string(),
       walletAddress: a.string(),
-      projectKYCs: a.hasMany("ProjectKYC", "userProfileId")
+      projectKYCs: a.hasMany("ProjectKYC", "userProfileId"),
+      projects: a.hasMany("Project", "userProfileId")
     })
     .authorization((allow) => [allow.owner()]),
   // RWA Projects
   Project: a
     .model({
+      userProfileId: a.id().required(),
+      userProfile: a.belongsTo("UserProfile", "userProfileId"),
       name: a.string().required(),
       type: a.string().required(), // "Commercial Real Estate", "Treasury Bond", "Gold Commodity", etc.
       location: a.string().required(), // Optional - not all assets have physical location
@@ -33,7 +36,7 @@ const schema = a.schema({
       tokenPrice: a.string().required(),
       previewImage: a.string(),
       images: a.string().array(),
-      status: a.enum(["ACTIVE", "LAUNCHING_SOON", "COMPLETED", "PAUSED", "CANCELLED"]),
+      status: a.enum(["PREPARE", "ACTIVE", "LAUNCHING_SOON", "COMPLETED", "PAUSED", "CANCELLED"]),
       category: a.enum([
         // Real Estate
         "COMMERCIAL", "RESIDENTIAL", "MIXED_USE", "INDUSTRIAL", "RETAIL",
