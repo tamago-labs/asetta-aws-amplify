@@ -8,14 +8,14 @@ const AboutContainer = () => {
     return (
         <div className="min-h-screen bg-white">
 
-            <div className="py-16 px-6">
+            <div className="py-16 pt-8 px-6">
                 <div className="max-w-4xl mx-auto">
                     <Breadcrumb items={[
                         { label: 'Home', href: '/' },
                         { label: 'About' }
                     ]} />
 
-                    <h1 className="text-5xl font-extralight mb-6 tracking-tight">About ASSETA</h1>
+                    <h1 className="text-5xl font-extralight mb-6 tracking-tight">About ASETTA</h1>
                     <p className="text-xl font-light text-gray-600 mb-12 leading-relaxed">
                         Revolutionizing real estate investment through blockchain technology and AI-powered tokenization.
                     </p>
@@ -45,7 +45,7 @@ const AboutContainer = () => {
                                     </div>
                                     <div>
                                         <div className="font-medium">Email</div>
-                                        <div className="text-gray-600 font-light">hello@asseta.com</div>
+                                        <div className="text-gray-600 font-light">hello@asetta.xyz</div>
                                     </div>
                                 </div>
 

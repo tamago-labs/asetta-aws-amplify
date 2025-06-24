@@ -11,7 +11,7 @@ const Header = () => {
         <header className="border-b border-gray-200 bg-white">
             <div className="max-w-7xl mx-auto px-6 py-4">
                 <div className="flex justify-between items-center">
-                    <Link href="/" className="text-2xl font-light tracking-tight">ASSETA</Link>
+                    <Link href="/" className="text-2xl font-light tracking-tight">ASETTA</Link>
                     <nav className="hidden md:flex space-x-8">
                         <Link
                             href="/"
@@ -41,16 +41,18 @@ const Header = () => {
                             About
                         </Link>
                         <Link
-                            href="https://github.com/tamago-labs/asseta"
+                            href="https://github.com/tamago-labs/asetta"
                             target="_blank"
                             className={`text-sm font-light transition-colors text-gray-600 hover:text-black`}
                         >
                             GitHub
                         </Link>
                     </nav>
-                    <button className="bg-black text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
-                        Dashboard
-                    </button>
+                    <Link href="/dashboard" >
+                        <button className="bg-black cursor-pointer  text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
+                            Dashboard
+                        </button>
+                    </Link> 
                 </div>
             </div>
         </header>

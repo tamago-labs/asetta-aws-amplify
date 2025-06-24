@@ -89,7 +89,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="  h-screen grid grid-cols-2">
             {/* Left Side - Project Details */}
             <div className="flex-1 bg-gray-50 overflow-y-auto">
                 {/* Hero Section */}
@@ -434,7 +434,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
             </div>
 
             {/* Right Side - AI Chat Assistant */}
-            <div className="flex-1 bg-white flex flex-col border-l border-gray-200 max-w-md">
+            <div className="flex-1 bg-white flex flex-col border-l border-gray-200 ">
                 <>
                     <div className="bg-white p-6 border-b border-gray-200">
                         <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>

@@ -23,7 +23,7 @@ const Hero = () => {
                     <Link href="/projects" className="bg-black text-white px-8 py-4 text-sm font-light hover:bg-gray-800 transition-colors">
                         Explore Projects
                     </Link>
-                    <Link href="https://github.com/tamago-labs/asseta" target='_blank'>
+                    <Link href="https://github.com/tamago-labs/asetta" target='_blank'>
                         <button className="border border-gray-300 cursor-pointer text-black px-8 py-4 text-sm font-light hover:bg-gray-50 transition-colors">
                             Learn More
                         </button>

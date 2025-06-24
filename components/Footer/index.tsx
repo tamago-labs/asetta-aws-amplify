@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-4 gap-8">
                     <div>
-                        <div className="text-xl font-light mb-4">ASSETA</div>
+                        <div className="text-xl font-light mb-4">ASETTA</div>
                         <p className="text-sm text-gray-600 font-light">
                             Revolutionizing real-world asset tokenization through multi-agent AI automation
                         </p>
@@ -39,7 +39,7 @@ const Footer = () => {
                 </div>
                 <div className="border-t border-gray-200 mt-12 pt-8 text-center">
                     <p className="text-sm text-gray-600 font-light">
-                        © 2025 ASSETA. All rights reserved.
+                        © 2025 Asetta. All rights reserved.
                     </p>
                 </div>
             </div>
