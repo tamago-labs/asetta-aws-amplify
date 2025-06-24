@@ -1,8 +1,7 @@
  
 import { Building2, Users, TrendingUp, Shield, Zap, Brain, FileCheck, Bot } from 'lucide-react';
 import { mockProjects } from "../../data/mockData"
-import Link from 'next/link';
-import Footer from '../Footer';
+import Link from 'next/link'; 
 import Hero from './Hero';
 import Features from "./Features"
 import AIAgents from './AIAgents';
@@ -18,17 +17,17 @@ const LandingContainer = () => {
             {/* Features Section */}
            <Features/>
 
+            {/* Active Projects */}
+            <ActiveProjects/>
+
             {/* AI Agents Section */}
-            <AIAgents/>
+            {/*<AIAgents/>*/}
 
             {/* Desktop Application Mode */}
             <Desktop/>
 
-            {/* Active Projects */}
-            <ActiveProjects/>
-
-            {/* Footer */}
-            <Footer/>
+           
+ 
         </div>
     )
 }
