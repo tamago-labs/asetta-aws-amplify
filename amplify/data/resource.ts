@@ -31,7 +31,8 @@ const schema = a.schema({
       tokensSold: a.string(),
       totalTokens: a.string(),
       tokenPrice: a.string().required(),
-      image: a.string(),
+      previewImage: a.string(),
+      images: a.string().array(),
       status: a.enum(["ACTIVE", "LAUNCHING_SOON", "COMPLETED", "PAUSED", "CANCELLED"]),
       category: a.enum([
         // Real Estate
@@ -39,10 +40,7 @@ const schema = a.schema({
         // Financial Assets
         "TREASURY", "CORPORATE_BOND", "MUNICIPAL_BOND", "GOVERNMENT_BOND",
         // Commodities
-        "PRECIOUS_METALS", "ENERGY", "AGRICULTURE", "INDUSTRIAL_METALS",
-        // Alternative Assets
-        "ART", "COLLECTIBLES", "INTELLECTUAL_PROPERTY", "MUSIC_ROYALTIES",
-        "CARBON_CREDITS", "INFRASTRUCTURE", "EQUIPMENT", "MACHINERY"
+        "PRECIOUS_METALS", "ENERGY", "AGRICULTURE", "INDUSTRIAL_METALS"
       ]),
       // Asset-specific fields (conditional based on asset type)
       yearBuilt: a.string(), // Real estate
@@ -51,12 +49,7 @@ const schema = a.schema({
       couponRate: a.float(), // Bonds
       creditRating: a.string(), // Bonds
       commodityGrade: a.string(), // Commodities
-      storageLocation: a.string(), // Physical commodities
-      artist: a.string(), // Art
-      provenance: a.string(), // Art/Collectibles
-      patentNumber: a.string(), // IP
-      licenseTerms: a.string(), // IP/Music
-      carbonStandard: a.string(), // Carbon credits
+      storageLocation: a.string(), // Physical commodities 
       smartContractId: a.string(), // ID on Smart Contract
       // Asset-specific metadata for smart contract
       assetMetadata: a.json(), // Flexible JSON for asset-specific data
