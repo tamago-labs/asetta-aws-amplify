@@ -9,9 +9,16 @@ const Hero = () => {
                     Multi-Agent Collaborative<br />
                     <span className="text-gray-600">For Real-World Asset Projects</span>
                 </h1>
-                <p className="text-base md:text-xl font-light text-gray-600 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-                    AWS-powered multi-agent platform deploying complete RWA projects in minutes across multiple chains using specialized AI agents and Chainlink CCIP
+                <p className="text-base md:text-xl font-light text-gray-600  mb-6 max-w-3xl mx-auto leading-relaxed">
+                    AWS-powered multi-agent platform deploying complete RWA projects in minutes across multiple chains using specialized AI agents and Chainlink services
                 </p>
+                <div className="mb-8">
+                    <div className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white">
+                        <span className="text-sm font-light text-gray-700">
+                            🌐 Currently live on Avalanche Fuji Testnet
+                        </span>
+                    </div>
+                </div>
                 <div className="flex justify-center gap-4">
                     <Link href="/projects" className="bg-black text-white px-8 py-4 text-sm font-light hover:bg-gray-800 transition-colors">
                         Explore Projects
@@ -20,7 +27,7 @@ const Hero = () => {
                         <button className="border border-gray-300 cursor-pointer text-black px-8 py-4 text-sm font-light hover:bg-gray-50 transition-colors">
                             Learn More
                         </button>
-                    </Link> 
+                    </Link>
                 </div>
             </div>
         </section>

@@ -7,15 +7,15 @@ const Desktop = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <div>
-                        <h2 className="text-4xl font-extralight mb-6 tracking-tight">Desktop Application Mode</h2>
+                        <h2 className="text-4xl font-extralight mb-6 tracking-tight">Desktop Application</h2>
                         <p className="text-lg font-light text-gray-600 mb-6 leading-relaxed">
                             Powerful desktop application for RWA project owners featuring MCP-based Multi-Agent Collaborative platform.
                             Streamline the entire tokenization process from legal compliance to smart contract deployment in minutes, not months.
                         </p>
-                        <p className="text-base font-light text-gray-600 mb-8 leading-relaxed">
+                        {/* <p className="text-base font-light text-gray-600 mb-8 leading-relaxed">
                             Our collaborative AI agents work together seamlessly to handle every aspect of asset tokenization,
                             from initial valuation and legal documentation to regulatory compliance and blockchain deployment.
-                        </p>
+                        </p> */}
 
                         <div className="mb-8">
                             <h3 className="text-lg font-light mb-4 text-gray-800">MCP Multi-Agent Workflow</h3>

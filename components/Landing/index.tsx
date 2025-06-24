@@ -18,14 +18,37 @@ const LandingContainer = () => {
             {/* Hero Section */}
             <Hero />
 
-            {/* Problem Section */}
-            <Problem />
+            <section className="py-16 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        <div>
+                            <h3 className="text-3xl font-light mb-2">2min</h3>
+                            <p className="text-gray-600 text-sm">Average Deploy Time</p>
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-light mb-2">5+</h3>
+                            <p className="text-gray-600 text-sm">AI Agents Working</p>
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-light mb-2">Multi-Chain</h3>
+                            <p className="text-gray-600 text-sm">Blockchain Support</p>
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-light mb-2">AWS</h3>
+                            <p className="text-gray-600 text-sm">Enterprise Infrastructure</p>
+                        </div>
+                    </div>
+                </div>
+            </section> 
 
             {/* Active Projects */}
             <ActiveProjects />
 
+            {/* Problem Section */}
+            <Problem />
+
             {/* How It Works Projects */}
-            <HowItWorks />
+            {/* <HowItWorks /> */}
 
             {/* Features Section */}
             {/* <Features /> */}

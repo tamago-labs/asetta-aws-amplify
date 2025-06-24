@@ -16,8 +16,8 @@ const Header = () => {
                         <Link
                             href="/"
                             className={`text-sm font-light transition-colors ${pathname === '/'
-                                    ? 'text-black border-b border-black'
-                                    : 'text-gray-600 hover:text-black'
+                                ? 'text-black border-b border-black'
+                                : 'text-gray-600 hover:text-black'
                                 }`}
                         >
                             Home
@@ -25,8 +25,8 @@ const Header = () => {
                         <Link
                             href="/projects"
                             className={`text-sm font-light transition-colors ${pathname === '/projects' || pathname.startsWith('/project/')
-                                    ? 'text-black border-b border-black'
-                                    : 'text-gray-600 hover:text-black'
+                                ? 'text-black border-b border-black'
+                                : 'text-gray-600 hover:text-black'
                                 }`}
                         >
                             Projects
@@ -34,24 +34,22 @@ const Header = () => {
                         <Link
                             href="/about"
                             className={`text-sm font-light transition-colors ${pathname === '/about'
-                                    ? 'text-black border-b border-black'
-                                    : 'text-gray-600 hover:text-black'
+                                ? 'text-black border-b border-black'
+                                : 'text-gray-600 hover:text-black'
                                 }`}
                         >
                             About
                         </Link>
                         <Link
-                            href="/contact"
-                            className={`text-sm font-light transition-colors ${pathname === '/contact'
-                                    ? 'text-black border-b border-black'
-                                    : 'text-gray-600 hover:text-black'
-                                }`}
+                            href="https://github.com/tamago-labs/asseta"
+                            target="_blank"
+                            className={`text-sm font-light transition-colors text-gray-600 hover:text-black`}
                         >
-                            Contact
+                            GitHub
                         </Link>
                     </nav>
                     <button className="bg-black text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
-                        Connect Wallet
+                        Dashboard
                     </button>
                 </div>
             </div>

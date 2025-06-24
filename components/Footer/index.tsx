@@ -9,7 +9,7 @@ const Footer = () => {
                     <div>
                         <div className="text-xl font-light mb-4">ASSETA</div>
                         <p className="text-sm text-gray-600 font-light">
-                            Revolutionizing real estate investment through blockchain tokenization
+                            Revolutionizing real-world asset tokenization through multi-agent AI automation
                         </p>
                     </div>
                     <div>

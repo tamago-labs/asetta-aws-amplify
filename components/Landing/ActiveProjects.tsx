@@ -9,7 +9,7 @@ const ActiveProjects = () => {
                     <div>
                         <h2 className="text-4xl font-extralight mb-4 tracking-tight">Active RWA Projects</h2>
                         <p className="text-lg font-light text-gray-600">
-                            Discover premium real estate investment opportunities
+                        Explore tokenized real-world assets from real estate to commodities and beyond
                         </p>
                     </div>
                     <Link href="/projects" className="text-sm font-light hover:text-gray-600 transition-colors border-b border-gray-300">
