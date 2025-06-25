@@ -31,4 +31,5 @@ export async function AuthGetCurrentUserServer() {
 
 export const reqResBasedClient = generateServerClientUsingReqRes<Schema>({
   config: outputs,
+  authMode: "iam"
 });

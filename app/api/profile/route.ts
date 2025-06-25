@@ -15,17 +15,18 @@ export async function GET(request: NextRequest, response: NextResponse<any>) {
     const user = await runWithAmplifyServerContext({
         nextServerContext: { request, response },
         operation: async (contextSpec) => {
-            const { data: entry } = await reqResBasedClient.models.UserProfile.get(
+            const response = await reqResBasedClient.models.UserProfile.get(
                 contextSpec,
                 {
                     id: query
                 }
             );
-            return entry;
+            const { data } = response
+            return data;
         },
     })
 
-    return new NextResponse(JSON.stringify({
+    return new NextResponse(JSON.stringify({ 
         firstName: user?.firstName,
         lastName: user?.lastName,
         email: user?.email
