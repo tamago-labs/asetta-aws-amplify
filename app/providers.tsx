@@ -8,6 +8,8 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { Authenticator, useTheme, View, Heading, Image, Text, Button, ThemeProvider, Theme } from '@aws-amplify/ui-react';
 
+import AccountProvider from "../contexts/account"
+
 Amplify.configure(outputs);
 
 
@@ -66,7 +68,9 @@ export function Providers({ children }: any) {
         <ThemeProvider theme={theme}>
             <View className="min-h-screen relative">
                 <Authenticator components={components}>
-                    {children}
+                    <AccountProvider>
+                        {children}
+                    </AccountProvider>
                 </Authenticator>
             </View>
         </ThemeProvider>
