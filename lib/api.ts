@@ -4,6 +4,7 @@ import { UserProfile, PortfolioInvestment, CreatedProject } from '@/types/dashbo
 const client = generateClient<Schema>({
     authMode: "userPool"
 });
+
 // User Profile API functions
 
 export const userProfileAPI = {
@@ -32,6 +33,7 @@ export const userProfileAPI = {
             }
             return entry
         } catch (error) {
+            console.log(error)
             console.error('Error fetching user profile:', error);
             throw error;
         }
