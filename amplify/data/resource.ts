@@ -19,7 +19,7 @@ const schema = a.schema({
       projectKYCs: a.hasMany("ProjectKYC", "userProfileId"),
       projects: a.hasMany("Project", "userProfileId")
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.publicApiKey()]),
   // RWA Projects
   Project: a
     .model({
@@ -69,8 +69,7 @@ const schema = a.schema({
       projectKYCs: a.hasMany("ProjectKYC", "projectId")
     })
     .authorization((allow) => [
-      allow.guest().to(["read"]),
-      allow.owner()
+      allow.publicApiKey()
     ]),
   // Project-specific KYC
   ProjectKYC: a
@@ -90,7 +89,7 @@ const schema = a.schema({
       complianceScore: a.integer(),
       riskRating: a.enum(["LOW", "MEDIUM", "HIGH", "VERY_HIGH"])
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.publicApiKey()]),
   // Project Documents
   ProjectDocument: a
     .model({
@@ -102,8 +101,7 @@ const schema = a.schema({
       documentType: a.enum(["PROSPECTUS", "FINANCIAL", "LEGAL", "TECHNICAL", "COMPLIANCE"]),
       isPublic: a.boolean().default(false)
     }).authorization((allow) => [
-      allow.guest().to(["read"]),
-      allow.owner()
+      allow.publicApiKey()
     ]),
 });
 
@@ -112,6 +110,9 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool"
+    defaultAuthorizationMode: "apiKey",
+    apiKeyAuthorizationMode: {
+      expiresInDays: 100,
+    },
   },
 });
