@@ -24,17 +24,15 @@ const Problem = () => {
                                 <span>High barriers to entry</span>
                             </li>
                         </ul>
-                        
-                         
                     </div>
-                    
+
                     <div>
                         <h2 className="text-3xl font-light mb-6">Our Solution</h2>
                         <p className="text-gray-600 mb-6">Revolutionizing real-world asset tokenization through multi-agent AI automation where each agent specializes in their field powered by AWS serverless infrastructure.</p>
                         <ul className="space-y-3 text-gray-600">
                             <li className="flex items-start">
                                 <span className="text-green-500 mr-3 mt-1">✓</span>
-                                <span>AWS Bedrock + Claude Sonnet 3.5 AI model</span>
+                                <span>AWS Bedrock + Claude Sonnet 4 AI model</span>
                             </li>
                             <li className="flex items-start">
                                 <span className="text-green-500 mr-3 mt-1">✓</span>
@@ -49,8 +47,8 @@ const Problem = () => {
                                 <span>KYC verification through AI chat assistant</span>
                             </li>
                         </ul>
-                         
-                         
+
+
                     </div>
                 </div>
             </div>
