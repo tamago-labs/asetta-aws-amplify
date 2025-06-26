@@ -83,9 +83,8 @@ const schema = a.schema({
       documents: a.hasMany("ProjectDocument", "projectId"),
       projectKYCs: a.hasMany("ProjectKYC", "projectId")
     })
-    .authorization((allow) => [
-      allow.guest().to(["read"]),
-      allow.owner()
+    .authorization((allow) => [ 
+      allow.guest() // temp.
     ]),
   // Project-specific KYC
   ProjectKYC: a
@@ -106,8 +105,8 @@ const schema = a.schema({
       riskRating: a.enum(["LOW", "MEDIUM", "HIGH", "VERY_HIGH"])
     })
     .authorization((allow) => [
-      allow.guest().to(["read"]),
-      allow.owner()]),
+      allow.guest() // temp. 
+    ]),
   // Project Documents
   ProjectDocument: a
     .model({
