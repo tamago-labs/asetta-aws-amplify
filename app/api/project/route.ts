@@ -11,41 +11,30 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
         const body = await request.json();
         const { 
             accessKey,
+            // Required fields
             name,
             type,
-            location,
-            value,
-            tokenPrice,
             category,
-            status = "PREPARE",
-            yieldRate,
-            occupancy,
+            location,
+            totalAssetValue,
+            tokenPrice,
             totalTokens,
-            previewImage,
-            images,
-            // Asset-specific fields
-            yearBuilt,
-            squareFootage,
-            maturityDate,
-            couponRate,
-            creditRating,
-            commodityGrade,
-            storageLocation,
-            // Metadata and requirements
-            assetMetadata,
-            kycRequirements,
-            requiredKycLevel = "BASIC",
-            jurisdiction,
-            regulatoryFramework,
             minimumInvestment,
-            maximumInvestment,
-            investorRestrictions
+            // Optional fields
+            status = "PREPARE",
+            buildingSize,
+            yearBuilt,
+            occupancyRate,
+            monthlyRentalIncome,
+            keyTenants,
+            previewImage,
+            images
         } = body;
 
         // Validate required fields
-        if (!accessKey || !name || !type || !location || !value || !tokenPrice || !category) {
+        if (!accessKey || !name || !type || !category || !location || !totalAssetValue || !tokenPrice || !totalTokens || !minimumInvestment) {
             return new NextResponse(JSON.stringify({
-                error: "Missing required fields: accessKey, name, type, location, value, tokenPrice, category"
+                error: "Missing required fields: accessKey, name, type, category, location, totalAssetValue, tokenPrice, totalTokens, minimumInvestment"
             }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
@@ -62,33 +51,23 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
                         name,
                         type,
                         location,
-                        value,
+                        value: totalAssetValue,
                         tokenPrice,
                         category,
                         status,
-                        yieldRate,
-                        occupancy,
                         tokensSold: "0", // Default to 0
                         totalTokens,
+                        occupancy: occupancyRate,
+                        yearBuilt,
+                        squareFootage: buildingSize,
+                        minimumInvestment,
                         previewImage,
                         images,
-                        // Asset-specific fields
-                        yearBuilt,
-                        squareFootage,
-                        maturityDate,
-                        couponRate,
-                        creditRating,
-                        commodityGrade,
-                        storageLocation,
-                        // Metadata and requirements
-                        assetMetadata,
-                        kycRequirements,
-                        requiredKycLevel,
-                        jurisdiction,
-                        regulatoryFramework,
-                        minimumInvestment,
-                        maximumInvestment,
-                        investorRestrictions
+                        // Store additional MVP fields in assetMetadata
+                        assetMetadata: {
+                            monthlyRentalIncome,
+                            keyTenants
+                        }
                     }
                 );
                 return entry;
@@ -104,8 +83,10 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
                 type: project?.type,
                 category: project?.category,
                 status: project?.status,
-                value: project?.value,
-                tokenPrice: project?.tokenPrice
+                totalAssetValue: project?.value,
+                tokenPrice: project?.tokenPrice,
+                totalTokens: project?.totalTokens,
+                minimumInvestment: project?.minimumInvestment
             }
         }), {
             status: 201,
