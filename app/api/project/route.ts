@@ -7,8 +7,10 @@ import {
 
 export async function POST(request: NextRequest, response: NextResponse<any>) {
     try {
+
         // Parse the request body
         const body = await request.json();
+ 
         const { 
             accessKey,
             // Required fields
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
         const project = await runWithAmplifyServerContext({
             nextServerContext: { request, response },
             operation: async (contextSpec) => {
-                const { data: entry } = await reqResBasedClient.models.Project.create(
+                const response = await reqResBasedClient.models.Project.create(
                     contextSpec,
                     {
                         userProfileId: accessKey,
@@ -64,16 +66,17 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
                         previewImage,
                         images,
                         // Store additional MVP fields in assetMetadata
-                        assetMetadata: {
+                        assetMetadata: JSON.stringify({
                             monthlyRentalIncome,
                             keyTenants
-                        }
+                        })
                     }
-                );
+                ); 
+                const entry = response?.data
                 return entry;
             },
         });
-
+ 
         return new NextResponse(JSON.stringify({
             status: "success",
             message: "RWA Project created successfully",
