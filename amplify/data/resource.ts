@@ -56,8 +56,20 @@ const schema = a.schema({
       creditRating: a.string(), // Bonds
       commodityGrade: a.string(), // Commodities
       storageLocation: a.string(), // Physical commodities 
-      smartContractId: a.string(), // ID on Smart Contract
-      // Asset-specific metadata for smart contract
+      
+      // Smart Contract Integration
+      smartContractId: a.string(), // Project ID on Smart Contract
+      tokenAddress: a.string(), // RWA Token contract address
+      primarySalesAddress: a.string(), // Primary Sales contract address
+      vaultAddress: a.string(), // Vault contract address
+      rfqAddress: a.string(), // RFQ contract address
+      coordinatorAddress: a.string(), // Coordinator contract address
+      network: a.string(), // Blockchain network (e.g., "avalanche-fuji")
+      blockchainTxHash: a.string(), // Transaction hash of creation
+      blockNumber: a.string(), // Block number where project was created
+      deployedAt: a.datetime(), // When contracts were deployed
+      
+      // Asset-specific metadata for additional data
       assetMetadata: a.json(), // Flexible JSON for asset-specific data
       // KYC Requirements (varies by asset type and jurisdiction)
       kycRequirements: a.json(),
