@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+/* Custom styles for Amplify AI Conversation to prevent overflow */
+[data-amplify-ai-conversation] {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+[data-amplify-ai-conversation] > div {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure the messages area is scrollable */
+[data-amplify-ai-conversation] [data-amplify-ai-conversation-messages] {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  max-height: 100% !important;
+}
+
+/* Style the input area to stay at bottom */
+[data-amplify-ai-conversation] [data-amplify-ai-conversation-input] {
+  flex-shrink: 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  background: white !important;
+  padding: 1rem !important;
+}
+
+/* Override default Amplify styles that might interfere */
+.amplify-ai-conversation {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.amplify-ai-conversation__messages {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 1rem !important;
+}
+
+.amplify-ai-conversation__form {
+  flex-shrink: 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  padding: 1rem !important;
+  background: white !important;
+}

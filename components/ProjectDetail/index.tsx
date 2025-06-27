@@ -14,18 +14,10 @@ import Breadcrumb from '../Breadcrumb';
 import Link from 'next/link';
 import AIConversation from './AIConversation';
 
-
 const client = generateClient<Schema>();
 
 interface IProjectDetails {
     id: string
-}
-
-interface Message {
-    id: string;
-    type: 'ai' | 'user';
-    content: string;
-    timestamp: Date;
 }
 
 const ProjectDetailContainer = ({ id }: IProjectDetails) => {
@@ -34,8 +26,6 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [isLoggedIn, setLoggedIn] = useState(false)
-
-    console.log("isLoggedIn:", isLoggedIn)
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -103,9 +93,9 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     const assetMetadata = parseAssetMetadata(project.assetMetadata);
 
     return (
-        <div className="h-screen grid grid-cols-2">
+        <div className="h-screen flex">
             {/* Left Side - Project Details */}
-            <div className="flex-1 bg-gray-50 overflow-y-auto">
+            <div className="w-1/2 bg-gray-50 overflow-y-auto">
                 {/* Hero Section */}
                 <div className="p-8 border-b border-gray-200">
                     <Breadcrumb items={[
@@ -356,35 +346,33 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
             </div>
 
             {/* Right Side - AI Chat Assistant */}
-            <div className="flex-1 bg-white flex flex-col border-l border-gray-200">
-
+            <div className="w-1/2 bg-white flex flex-col border-l border-gray-200">
                 {!isLoggedIn ? (
-                    <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
                         <p className="text-gray-600 text-sm mb-4">Please log in to use the AI assistant features.</p>
-
-                        <Link href="/dashboard" >
-                            <button className="bg-black cursor-pointer  text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
+                        <Link href="/dashboard">
+                            <button className="bg-black cursor-pointer text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
                                 Go to Login
                             </button>
                         </Link>
                     </div>
                 ) : (
-                    <div className="flex-1 p-6">
-                        <div className="bg-white p-6 border-b border-gray-200">
+                    <>
+                        {/* Chat Header */}
+                        <div className="bg-white p-6 border-b border-gray-200 flex-shrink-0">
                             <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>
                             <div className="text-sm text-gray-500 font-light">KYC verification, investment guidance & purchase support</div>
-
-                            <div className="flex items-center gap-3 mt-4 p-3 bg-gray-50 rounded border border-gray-200">
-                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <div className="text-xs text-gray-500 font-light">AI assistant active</div>
-                            </div>
+                            
                         </div>
 
-                        <AIConversation/>
-
-                    </div>
+                        {/* Chat Container - This fixes the overflow issue */}
+                        <div className="flex-1 min-h-0 flex flex-col">
+                            <div className="flex-1 overflow-hidden">
+                                <AIConversation />
+                            </div>
+                        </div>
+                    </>
                 )}
-
             </div>
         </div>
     )

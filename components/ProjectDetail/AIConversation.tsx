@@ -7,7 +7,6 @@ export const client = generateClient<Schema>({ authMode: "userPool" });
 export const { useAIConversation, useAIGeneration } = createAIHooks(client);
 
 const AIConversationContainer = () => {
-
     const [
         {
             data: { messages },
@@ -17,16 +16,23 @@ const AIConversationContainer = () => {
     ] = useAIConversation('Chat');
 
     return (
-        <div>
-              <Authenticator>
-            <AIConversation
-                messages={messages}
-                isLoading={isLoading}
-                handleSendMessage={handleSendMessage}
-            />
-        </Authenticator>
+        <div className="h-full flex flex-col">
+            <Authenticator>
+                <div className="h-full flex flex-col">
+                    <AIConversation
+                        messages={messages}
+                        isLoading={isLoading}
+                        handleSendMessage={handleSendMessage}
+                        // className="h-full"
+                        style={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    />
+                </div>
+            </Authenticator>
         </div>
-      
     )
 }
 
