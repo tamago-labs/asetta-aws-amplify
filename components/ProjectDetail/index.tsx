@@ -13,6 +13,7 @@ import {
 import Breadcrumb from '../Breadcrumb';
 import Link from 'next/link';
 import AIConversation from './AIConversation';
+import { ConnectWallet } from '@/components/Wallet/ConnectWallet';
 
 const client = generateClient<Schema>();
 
@@ -22,6 +23,7 @@ interface IProjectDetails {
 
 const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     const [project, setProject] = useState<any>(null);
+    const [documents, setDocuments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
@@ -47,6 +49,16 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
                 if (projectData) {
                     setProject(projectData);
+                    
+                    // Fetch project documents
+                    const { data: documentsData } = await client.models.ProjectDocument.list({
+                        filter: { projectId: { eq: id } },
+                        authMode: isLoggedIn ? 'userPool' : "iam"
+                    });
+                    
+                    if (documentsData) {
+                        setDocuments(documentsData);
+                    }
                 } else {
                     setError('Project not found');
                 }
@@ -62,6 +74,23 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
             fetchProject();
         }
     }, [id]);
+
+    const getDocumentTypeIcon = (type: string) => {
+        switch (type.toUpperCase()) {
+            case 'PROSPECTUS':
+                return <FileText size={16} className="text-blue-400" />;
+            case 'FINANCIAL':
+                return <FileText size={16} className="text-green-400" />;
+            case 'LEGAL':
+                return <Shield size={16} className="text-red-400" />;
+            case 'TECHNICAL':
+                return <FileText size={16} className="text-purple-400" />;
+            case 'COMPLIANCE':
+                return <CheckCircle size={16} className="text-orange-400" />;
+            default:
+                return <FileText size={16} className="text-gray-400" />;
+        }
+    };
 
     if (loading) {
         return (
@@ -135,7 +164,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                 <div className="border-b border-gray-200">
                     <div className="px-8">
                         <nav className="flex space-x-8">
-                            {['overview', 'financials', 'token-info', 'kyc', 'documents'].map((tab) => (
+                            {['overview', 'financials', 'token-info', 'invest-now', 'kyc', 'documents'].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -229,9 +258,117 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                                             <div className="text-sm text-gray-500">Monthly Income</div>
                                         </div>
                                     )}
+                                    {project.minimumInvestment && (
+                                        <div>
+                                            <div className="text-2xl font-light mb-1">${project.minimumInvestment}</div>
+                                            <div className="text-sm text-gray-500">Min. Investment</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'invest-now' && (
+                        <div className="space-y-6">
+                            {/* Investment Summary */}
+                            <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-light mb-4">Investment Summary</h3>
+                                <div className="grid grid-cols-2 gap-6">
                                     <div>
-                                        <div className="text-2xl font-light mb-1">${project.minimumInvestment || '1,000'}</div>
-                                        <div className="text-sm text-gray-500">Min. Investment</div>
+                                        <div className="text-2xl font-light mb-1">${project.tokenPrice}</div>
+                                        <div className="text-sm text-gray-500">Price per Token</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-2xl font-light text-green-600 mb-1">{project.yieldRate || 'N/A'}</div>
+                                        <div className="text-sm text-gray-500">Expected Annual Yield</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-2xl font-light mb-1">{project.minimumInvestment ? `${project.minimumInvestment}` : 'No minimum'}</div>
+                                        <div className="text-sm text-gray-500">Minimum Investment</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-2xl font-light mb-1">
+                                            {Math.round(((parseInt(project.totalTokens) - parseInt(project.tokensSold || '0')) / parseInt(project.totalTokens)) * 100)}%
+                                        </div>
+                                        <div className="text-sm text-gray-500">Available</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Connect Wallet & Investment Interface */}
+                            <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-light mb-4">Connect Wallet & Invest</h3>
+                                <ConnectWallet projectData={project} />
+                            </div>
+
+                            {/* Investment Calculator */}
+                            <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-light mb-4">Investment Calculator</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-light text-gray-600 mb-2">
+                                            Investment Amount (USD)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="Enter amount"
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                            onChange={(e) => {
+                                                const amount = parseFloat(e.target.value) || 0;
+                                                const tokenPrice = parseFloat(project.tokenPrice) || 0;
+                                                const tokens = tokenPrice > 0 ? amount / tokenPrice : 0;
+                                                const yieldRate = parseFloat(project.yieldRate?.replace('%', '') || '0') / 100;
+                                                const annualReturn = amount * yieldRate;
+                                                
+                                                // Update calculator display (you can add state for this)
+                                                const tokensEl = document.getElementById('calc-tokens');
+                                                const returnEl = document.getElementById('calc-return');
+                                                const monthlyEl = document.getElementById('calc-monthly');
+                                                
+                                                if (tokensEl) tokensEl.textContent = tokens.toFixed(2);
+                                                if (returnEl) returnEl.textContent = `${annualReturn.toFixed(2)}`;
+                                                if (monthlyEl) monthlyEl.textContent = `${(annualReturn / 12).toFixed(2)}`;
+                                            }}
+                                        />
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                                        <div>
+                                            <div className="text-lg font-light mb-1" id="calc-tokens">0</div>
+                                            <div className="text-xs text-gray-500 uppercase tracking-wide">Tokens</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-light text-green-600 mb-1" id="calc-return">$0</div>
+                                            <div className="text-xs text-gray-500 uppercase tracking-wide">Annual Return</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-light mb-1" id="calc-monthly">$0</div>
+                                            <div className="text-xs text-gray-500 uppercase tracking-wide">Monthly Return</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Investment Risks & Disclaimers */}
+                            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-light mb-4">Important Information</h3>
+                                <div className="space-y-3 text-sm text-gray-600">
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                                        <p>This is a tokenized real-world asset investment. Returns are not guaranteed and depend on property performance.</p>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                                        <p>Tokens represent fractional ownership and may be subject to regulatory restrictions in your jurisdiction.</p>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                                        <p>Complete KYC verification may be required before investment depending on your location and investment amount.</p>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                                        <p>Please read all project documents and consult with financial advisors before investing.</p>
                                     </div>
                                 </div>
                             </div>
@@ -277,16 +414,26 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                                 <div className="space-y-4">
                                     <div>
                                         <span className="text-gray-500">Required Level:</span>
-                                        <span className="ml-2 font-light">{project.requiredKycLevel || 'BASIC'}</span>
+                                        <span className="ml-2 font-light">{project.requiredKycLevel || 'Not specified'}</span>
                                     </div>
                                     <div>
                                         <span className="text-gray-500">Jurisdiction:</span>
-                                        <span className="ml-2 font-light">{project.jurisdiction || 'Global'}</span>
+                                        <span className="ml-2 font-light">{project.jurisdiction || 'Not specified'}</span>
                                     </div>
                                     {project.regulatoryFramework && (
                                         <div>
                                             <span className="text-gray-500">Framework:</span>
                                             <span className="ml-2 font-light">{project.regulatoryFramework}</span>
+                                        </div>
+                                    )}
+                                    {project.investorRestrictions && project.investorRestrictions.length > 0 && (
+                                        <div>
+                                            <span className="text-gray-500">Investor Restrictions:</span>
+                                            <div className="ml-2 font-light">
+                                                {project.investorRestrictions.map((restriction: string, index: number) => (
+                                                    <div key={index} className="text-sm text-gray-600">• {restriction}</div>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -298,47 +445,40 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                         <div className="space-y-6">
                             <div className="bg-white p-6 rounded-lg border border-gray-200">
                                 <h3 className="text-lg font-light mb-4">Project Documents</h3>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                                        <div className="flex items-center gap-3">
-                                            <FileText size={16} className="text-gray-400" />
-                                            <div>
-                                                <div className="font-light">Project Prospectus</div>
-                                                <div className="text-xs text-gray-500">PDF</div>
+                                {documents.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {documents.map((document) => (
+                                            <div key={document.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                                                <div className="flex items-center gap-3">
+                                                    {getDocumentTypeIcon(document.documentType || 'DEFAULT')}
+                                                    <div>
+                                                        <div className="font-light">{document.name}</div>
+                                                        <div className="text-xs text-gray-500">{document.type}</div>
+                                                    </div>
+                                                </div>
+                                                {document.url ? (
+                                                    <a
+                                                        href={document.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-sm text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <Download size={14} className="inline mr-1" />
+                                                        Download
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-sm text-gray-400">Coming soon</span>
+                                                )}
                                             </div>
-                                        </div>
-                                        <button className="text-sm text-blue-600 hover:text-blue-800">
-                                            <Download size={14} className="inline mr-1" />
-                                            Download
-                                        </button>
+                                        ))}
                                     </div>
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                                        <div className="flex items-center gap-3">
-                                            <FileText size={16} className="text-gray-400" />
-                                            <div>
-                                                <div className="font-light">Financial Statements</div>
-                                                <div className="text-xs text-gray-500">PDF</div>
-                                            </div>
-                                        </div>
-                                        <button className="text-sm text-blue-600 hover:text-blue-800">
-                                            <Download size={14} className="inline mr-1" />
-                                            Download
-                                        </button>
+                                ) : (
+                                    <div className="text-center py-8 text-gray-500">
+                                        <FileText size={48} className="mx-auto mb-2 opacity-50" />
+                                        <p className="text-sm">No documents available yet</p>
+                                        <p className="text-xs text-gray-400 mt-1">Documents will be uploaded as they become available</p>
                                     </div>
-                                    <div className="flex items-center justify-between py-3">
-                                        <div className="flex items-center gap-3">
-                                            <FileText size={16} className="text-gray-400" />
-                                            <div>
-                                                <div className="font-light">Token Terms</div>
-                                                <div className="text-xs text-gray-500">PDF</div>
-                                            </div>
-                                        </div>
-                                        <button className="text-sm text-blue-600 hover:text-blue-800">
-                                            <Download size={14} className="inline mr-1" />
-                                            Download
-                                        </button>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     )}
@@ -361,14 +501,13 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                         {/* Chat Header */}
                         <div className="bg-white p-6 border-b border-gray-200 flex-shrink-0">
                             <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>
-                            <div className="text-sm text-gray-500 font-light">KYC verification, investment guidance & purchase support</div>
-                            
+                            <div className="text-sm text-gray-500 font-light">Get help with investment questions, KYC, and token purchases</div>
                         </div>
 
-                        {/* Chat Container - This fixes the overflow issue */}
+                        {/* Chat Container */}
                         <div className="flex-1 min-h-0 flex flex-col">
                             <div className="flex-1 overflow-hidden">
-                                <AIConversation />
+                                <AIConversation projectId={id} projectData={project} />
                             </div>
                         </div>
                     </>
