@@ -5,12 +5,15 @@ import { MapPin, Calendar, Users, Shield, Download, FileText, CheckCircle, Alert
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource';
 import { getCurrentUser } from 'aws-amplify/auth';
-import { 
-    formatValue, 
-    getCategoryIcon, 
-    parseAssetMetadata 
+import {
+    formatValue,
+    getCategoryIcon,
+    parseAssetMetadata
 } from '@/utils/formatters';
 import Breadcrumb from '../Breadcrumb';
+import Link from 'next/link';
+import AIConversation from './AIConversation';
+
 
 const client = generateClient<Schema>();
 
@@ -30,9 +33,9 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [inputValue, setInputValue] = useState('');
-    const [kycStarted, setKycStarted] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(false)
+
+    console.log("isLoggedIn:", isLoggedIn)
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -41,22 +44,19 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                 try {
                     const { username } = await getCurrentUser();
                     isLoggedIn = username !== undefined;
-                } catch (e) {}
+                } catch (e) { }
 
                 const { data: projectData } = await client.models.Project.get(
                     { id },
                     { authMode: isLoggedIn ? 'userPool' : "iam" }
                 );
 
+                if (isLoggedIn) {
+                    setLoggedIn(true)
+                }
+
                 if (projectData) {
                     setProject(projectData);
-                    // Initialize welcome message
-                    setMessages([{
-                        id: '1',
-                        type: 'ai',
-                        content: `Welcome to ${projectData.name}. I'm your AI investment assistant, here to help you with everything from understanding the investment opportunity to completing your KYC process. This premium ${projectData.type.toLowerCase()} offers ${projectData.yieldRate ? `excellent returns with a ${projectData.yieldRate} annual yield` : 'great investment potential'}. How can I assist you today?`,
-                        timestamp: new Date()
-                    }]);
                 } else {
                     setError('Project not found');
                 }
@@ -72,59 +72,6 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
             fetchProject();
         }
     }, [id]);
-
-    const handleSend = () => {
-        if (!inputValue.trim() || !project) return;
-
-        const userMessage: Message = {
-            id: Date.now().toString(),
-            type: 'user',
-            content: inputValue,
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setInputValue('');
-
-        setTimeout(() => {
-            let aiResponse = '';
-
-            if (inputValue.toLowerCase().includes('kyc') || inputValue.toLowerCase().includes('verification')) {
-                aiResponse = 'I can help you start the KYC process right now. I\'ll need to collect some basic information including your identity verification, proof of address, and investment experience. Shall we begin with your personal details?';
-                setKycStarted(true);
-            } else if (inputValue.toLowerCase().includes('invest') || inputValue.toLowerCase().includes('buy')) {
-                aiResponse = `Great! For ${project.name}, tokens are priced at $${project.tokenPrice} each. The minimum investment is ${project.minimumInvestment ? `$${project.minimumInvestment}` : '$1,000'}. I can help you calculate potential returns and guide you through the purchase process. Would you like me to start the investment flow?`;
-            } else if (inputValue.toLowerCase().includes('return') || inputValue.toLowerCase().includes('yield')) {
-                aiResponse = project.yieldRate 
-                    ? `This property generates a ${project.yieldRate} annual yield through ${project.category === 'COMMERCIAL' ? 'rental income' : 'asset appreciation'}. ${project.occupancy ? `With ${project.occupancy} occupancy and stable long-term tenants,` : ''} it provides ${project.yieldRate ? 'consistent monthly distributions' : 'strong returns'}. Would you like me to calculate potential returns for a specific investment amount?`
-                    : 'I can provide detailed information about potential returns for this investment. Would you like me to calculate returns for a specific investment amount?';
-            } else {
-                aiResponse = 'Thank you for your question. I can provide detailed information about the investment opportunity, help calculate returns, assist with KYC verification, or guide you through the token purchase process. What specific aspect would you like to explore?';
-            }
-
-            const aiMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                type: 'ai',
-                content: aiResponse,
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, aiMessage]);
-        }, 1000);
-    };
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
-
-    const quickActions = [
-        { text: 'Start KYC Process', action: () => setInputValue('I want to start the KYC verification process') },
-        { text: 'Calculate Returns', action: () => setInputValue('Calculate returns for $5,000 investment') },
-        { text: 'View Documents', action: () => setInputValue('Show me the property documents and prospectus') },
-        { text: 'Investment Process', action: () => setInputValue('How do I invest in this property?') }
-    ];
 
     if (loading) {
         return (
@@ -142,8 +89,8 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
             <div className="h-screen flex items-center justify-center">
                 <div className="text-center">
                     <p className="text-red-600 mb-4">{error || 'Project not found'}</p>
-                    <button 
-                        onClick={() => window.history.back()} 
+                    <button
+                        onClick={() => window.history.back()}
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                         Go Back
@@ -410,92 +357,34 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
             {/* Right Side - AI Chat Assistant */}
             <div className="flex-1 bg-white flex flex-col border-l border-gray-200">
-                <div className="bg-white p-6 border-b border-gray-200">
-                    <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>
-                    <div className="text-sm text-gray-500 font-light">KYC verification, investment guidance & purchase support</div>
 
-                    <div className="flex items-center gap-3 mt-4 p-3 bg-gray-50 rounded border border-gray-200">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <div className="text-xs text-gray-500 font-light">AI assistant active</div>
+                {!isLoggedIn ? (
+                    <div className="flex flex-col items-center justify-center p-6 text-center">
+                        <p className="text-gray-600 text-sm mb-4">Please log in to use the AI assistant features.</p>
+
+                        <Link href="/dashboard" >
+                            <button className="bg-black cursor-pointer  text-white px-6 py-2 text-sm font-light hover:bg-gray-800 transition-colors">
+                                Go to Login
+                            </button>
+                        </Link>
                     </div>
-                </div>
+                ) : (
+                    <div className="flex-1 p-6">
+                        <div className="bg-white p-6 border-b border-gray-200">
+                            <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>
+                            <div className="text-sm text-gray-500 font-light">KYC verification, investment guidance & purchase support</div>
 
-                <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
-                    {messages.map((message) => (
-                        <div key={message.id} className={`flex gap-3 ${message.type === 'user' ? 'self-end flex-row-reverse max-w-3/4' : 'max-w-3/4'}`}>
-                            <div className={`w-10 h-10 rounded flex items-center justify-center text-white text-sm flex-shrink-0 ${message.type === 'ai' ? 'bg-gray-700' : 'bg-blue-500'}`}>
-                                {message.type === 'ai' ? 'AI' : 'U'}
-                            </div>
-                            <div className={`p-4 rounded text-sm leading-relaxed font-light border ${message.type === 'user'
-                                ? 'bg-blue-500 text-white border-transparent'
-                                : 'bg-gray-50 border-gray-200 text-gray-800'
-                                }`}>
-                                {message.content}
-                                {message.type === 'ai' && message.id === '1' && (
-                                    <div className="mt-4 space-y-2">
-                                        {quickActions.map((action, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={action.action}
-                                                className="block w-full text-left px-3 py-2 bg-white border border-gray-200 rounded text-xs text-gray-700 hover:bg-gray-100 hover:border-blue-500 hover:text-blue-600 transition-all font-normal"
-                                            >
-                                                {action.text}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                            <div className="flex items-center gap-3 mt-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <div className="text-xs text-gray-500 font-light">AI assistant active</div>
                             </div>
                         </div>
-                    ))}
 
-                    {kycStarted && (
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h4 className="text-sm font-medium text-blue-800 mb-2">KYC Process Started</h4>
-                            <p className="text-sm text-blue-700 font-light mb-3">
-                                I'll guide you through the verification process step by step.
-                            </p>
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs">
-                                    <div className="w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">1</div>
-                                    <span className="text-blue-700 font-light">Personal Information</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-xs">
-                                    <div className="w-4 h-4 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs">2</div>
-                                    <span className="text-gray-600 font-light">Identity Verification</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-xs">
-                                    <div className="w-4 h-4 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs">3</div>
-                                    <span className="text-gray-600 font-light">Address Verification</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        <AIConversation/>
 
-                    {messages.length === 1 && (
-                        <div className="text-center text-gray-400 italic font-light mt-16 text-sm">
-                            Ask about investment details, start KYC, or begin the purchase process...
-                        </div>
-                    )}
-                </div>
-
-                <div className="p-6 bg-white border-t border-gray-200">
-                    <div className="flex gap-3 items-end">
-                        <textarea
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            className="flex-1 p-3 border border-gray-300 rounded text-gray-800 resize-none min-h-6 max-h-24 font-light text-sm transition-colors focus:outline-none focus:border-blue-500"
-                            placeholder="Ask about investment, KYC process, or how to purchase tokens..."
-                            rows={1}
-                        />
-                        <button
-                            onClick={handleSend}
-                            className="bg-blue-500 text-white border-none rounded px-6 py-3 cursor-pointer font-normal text-sm tracking-wide transition-colors hover:bg-blue-600"
-                        >
-                            Send
-                        </button>
                     </div>
-                </div>
+                )}
+
             </div>
         </div>
     )
