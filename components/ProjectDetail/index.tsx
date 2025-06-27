@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, Users, Shield, Download, FileText, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { MapPin, Calendar, Users, Shield, Download, FileText, CheckCircle, AlertCircle, Loader2, ExternalLink } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource';
 import { getCurrentUser } from 'aws-amplify/auth';
@@ -14,6 +14,7 @@ import Breadcrumb from '../Breadcrumb';
 import Link from 'next/link';
 import AIConversation from './AIConversation';
 import { ConnectWallet } from '@/components/Wallet/ConnectWallet';
+import { useRWAContract } from '@/hooks/useRWAContract';
 
 const client = generateClient<Schema>();
 
@@ -28,6 +29,9 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [isLoggedIn, setLoggedIn] = useState(false)
+
+    // Fetch blockchain data for project ID 1 (fixed as requested)
+    const blockchainData = useRWAContract(1);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -49,13 +53,13 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
                 if (projectData) {
                     setProject(projectData);
-                    
+
                     // Fetch project documents
                     const { data: documentsData } = await client.models.ProjectDocument.list({
                         filter: { projectId: { eq: id } },
                         authMode: isLoggedIn ? 'userPool' : "iam"
                     });
-                    
+
                     if (documentsData) {
                         setDocuments(documentsData);
                     }
@@ -121,6 +125,8 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
     const assetMetadata = parseAssetMetadata(project.assetMetadata);
 
+    console.log("blockchainData:", blockchainData)
+
     return (
         <div className="h-screen flex">
             {/* Left Side - Project Details */}
@@ -164,7 +170,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                 <div className="border-b border-gray-200">
                     <div className="px-8">
                         <nav className="flex space-x-8">
-                            {['overview', 'financials', 'token-info', 'invest-now', 'kyc', 'documents'].map((tab) => (
+                            {['overview', 'financials', 'token-info', 'wallet' ].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -186,8 +192,13 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                         <div className="space-y-8">
                             <div className="grid grid-cols-3 gap-6">
                                 <div className="bg-white p-6 rounded-lg border border-gray-200">
-                                    <h3 className="text-2xl font-light mb-1">{formatValue(project.value)}</h3>
+                                    <h3 className="text-2xl font-light mb-1">
+                                        {blockchainData.formatted?.totalValueUSD || formatValue(project.value)}
+                                    </h3>
                                     <p className="text-sm text-gray-500 uppercase tracking-wide">Total Value</p>
+                                    {blockchainData.formatted?.totalValueUSD && (
+                                        <p className="text-xs text-green-600 mt-1">Live from blockchain</p>
+                                    )}
                                 </div>
                                 <div className="bg-white p-6 rounded-lg border border-gray-200">
                                     <h3 className="text-2xl font-light text-green-600 mb-1">{project.yieldRate || 'N/A'}</h3>
@@ -269,7 +280,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                         </div>
                     )}
 
-                    {activeTab === 'invest-now' && (
+                    {activeTab === 'wallet' && (
                         <div className="space-y-6">
                             {/* Investment Summary */}
                             <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -298,7 +309,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
                             {/* Connect Wallet & Investment Interface */}
                             <div className="bg-white p-6 rounded-lg border border-gray-200">
-                                <h3 className="text-lg font-light mb-4">Connect Wallet & Invest</h3>
+                                <h3 className="text-lg font-light mb-4">Connect Wallet</h3>
                                 <ConnectWallet projectData={project} />
                             </div>
 
@@ -320,19 +331,19 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                                                 const tokens = tokenPrice > 0 ? amount / tokenPrice : 0;
                                                 const yieldRate = parseFloat(project.yieldRate?.replace('%', '') || '0') / 100;
                                                 const annualReturn = amount * yieldRate;
-                                                
+
                                                 // Update calculator display (you can add state for this)
                                                 const tokensEl = document.getElementById('calc-tokens');
                                                 const returnEl = document.getElementById('calc-return');
                                                 const monthlyEl = document.getElementById('calc-monthly');
-                                                
+
                                                 if (tokensEl) tokensEl.textContent = tokens.toFixed(2);
                                                 if (returnEl) returnEl.textContent = `${annualReturn.toFixed(2)}`;
                                                 if (monthlyEl) monthlyEl.textContent = `${(annualReturn / 12).toFixed(2)}`;
                                             }}
                                         />
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
                                         <div>
                                             <div className="text-lg font-light mb-1" id="calc-tokens">0</div>
@@ -377,33 +388,223 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
 
                     {activeTab === 'token-info' && (
                         <div className="space-y-6">
-                            <div className="bg-white p-6 rounded-lg border border-gray-200">
-                                <h3 className="text-lg font-light mb-4">Token Information</h3>
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <div className="text-2xl font-light mb-1">${project.tokenPrice}</div>
-                                        <div className="text-sm text-gray-500">Price per Token</div>
+                            {blockchainData.isLoading ? (
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                    <div className="flex items-center gap-2 text-blue-600 mb-2">
+                                        <Loader2 size={16} className="animate-spin" />
+                                        <h3 className="font-medium">Loading Live Blockchain Data</h3>
                                     </div>
-                                    <div>
-                                        <div className="text-2xl font-light mb-1">{project.totalTokens || 'N/A'}</div>
-                                        <div className="text-sm text-gray-500">Total Supply</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-light mb-1">{project.tokensSold || '0'}</div>
-                                        <div className="text-sm text-gray-500">Tokens Sold</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-light mb-1">{project.network || 'N/A'}</div>
-                                        <div className="text-sm text-gray-500">Network</div>
-                                    </div>
+                                    <p className="text-blue-700 text-sm">Fetching real-time data from Avalanche Fuji...</p>
                                 </div>
-                                {project.tokenAddress && (
+                            ) : blockchainData.error ? (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                                    <div className="flex items-center gap-2 text-red-600 mb-2">
+                                        <AlertCircle size={16} />
+                                        <h3 className="font-medium">Blockchain Connection Error</h3>
+                                    </div>
+                                    <p className="text-red-700 text-sm">{blockchainData.error}</p>
+                                </div>
+                            ) : blockchainData.project && blockchainData.token ? (
+                                <>
+                                    {/* Live Token Metrics */}
+                                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-light">Live Token Information</h3>
+                                            <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                                                Avalanche Fuji • Live Data
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.pricePerToken}</div>
+                                                <div className="text-sm text-gray-500">Price per Token</div>
+                                                <div className="text-xs text-green-600 mt-1">In USD</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.totalSupply}</div>
+                                                <div className="text-sm text-gray-500">Total Supply</div>
+                                                <div className="text-xs text-gray-400 mt-1">{blockchainData.token.symbol}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.availableLiquidity}</div>
+                                                <div className="text-sm text-gray-500">Available Tokens</div>
+                                                <div className="text-xs text-green-600 mt-1">For purchase</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.marketCap}</div>
+                                                <div className="text-sm text-gray-500">Market Cap</div>
+                                                <div className="text-xs text-green-600 mt-1">Live on-chain</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Token Details */}
+                                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                        <h3 className="text-lg font-light mb-4">Token Details</h3>
+                                        <div className="space-y-3 text-sm">
+                                            <div>
+                                                <span className="text-gray-500">Token Name:</span>
+                                                <span className="ml-2 font-light">{blockchainData.token.name}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Token Symbol:</span>
+                                                <span className="ml-2 font-light">{blockchainData.token.symbol}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Decimals:</span>
+                                                <span className="ml-2 font-light">{blockchainData.token.decimals}</span>
+                                            </div>
+                                            {/* <div>
+                                                <span className="text-gray-500">Asset Type:</span>
+                                                <span className="ml-2 font-light">{blockchainData.token.assetData.assetType}</span>
+                                            </div> */}
+                                            <div>
+                                                <span className="text-gray-500">Network:</span>
+                                                <span className="ml-2 font-light">Avalanche Fuji Testnet</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Smart Contract Addresses */}
+                                    {/* <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                        <h3 className="text-lg font-light mb-4">Smart Contract Addresses</h3>
+                                        <div className="space-y-3 text-sm">
+                                            <div>
+                                                <span className="text-gray-500">Token Contract:</span>
+                                                <div className="ml-2 font-mono text-xs bg-gray-50 p-2 rounded border flex items-center justify-between mt-1">
+                                                    <span>{blockchainData.project.rwaToken}</span>
+                                                    <a
+                                                        href={`https://testnet.snowtrace.io/address/${blockchainData.project.rwaToken}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <ExternalLink size={12} />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Primary Sales:</span>
+                                                <div className="ml-2 font-mono text-xs bg-gray-50 p-2 rounded border flex items-center justify-between mt-1">
+                                                    <span>{blockchainData.project.primarySales}</span>
+                                                    <a
+                                                        href={`https://testnet.snowtrace.io/address/${blockchainData.project.primarySales}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <ExternalLink size={12} />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Vault:</span>
+                                                <div className="ml-2 font-mono text-xs bg-gray-50 p-2 rounded border flex items-center justify-between mt-1">
+                                                    <span>{blockchainData.project.vault}</span>
+                                                    <a
+                                                        href={`https://testnet.snowtrace.io/address/${blockchainData.project.vault}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <ExternalLink size={12} />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> */}
+
+                                    {/* Token Allocation */}
+                                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                        <h3 className="text-lg font-light mb-4">Token Allocation</h3>
+                                        <div className="grid grid-cols-3 gap-6">
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.projectTokens}</div>
+                                                <div className="text-sm text-gray-500">Project Tokens</div>
+                                                <div className="text-xs text-gray-400">{Number(blockchainData.token?.projectAllocationPercent)}%</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.liquidityTokens}</div>
+                                                <div className="text-sm text-gray-500">Liquidity Tokens</div>
+                                                <div className="text-xs text-gray-400">{100 - Number(blockchainData.token?.projectAllocationPercent)}%</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-2xl font-light mb-1">{blockchainData.formatted?.availableLiquidity}</div>
+                                                <div className="text-sm text-gray-500">Available for Sale</div>
+                                                <div className="text-xs text-green-600">Real-time</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Asset Information */}
+                                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                        <h3 className="text-lg font-light mb-4">On-Chain Asset Data</h3>
+                                        <div className="space-y-3 text-sm">
+                                            <div>
+                                                <span className="text-gray-500">Total Asset Value:</span>
+                                                <span className="ml-2 font-light">{blockchainData.formatted?.totalValueUSD}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Created:</span>
+                                                <span className="ml-2 font-light">{blockchainData.formatted?.createdAt}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Project Wallet:</span>
+                                                <span className="ml-2 font-mono text-xs">{blockchainData.token?.projectWallet?.slice(0, 6)}...{blockchainData.token?.projectWallet?.slice(-4)}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Project Token:</span>
+                                                <span className="ml-2 font-mono text-xs">{blockchainData.project.rwaToken?.slice(0, 6)}...{blockchainData.project.rwaToken?.slice(-4)}</span>
+                                            </div>
+                                            {/* {blockchainData.token?.assetData.description && (
+                                                <div>
+                                                    <span className="text-gray-500">Description:</span>
+                                                    <span className="ml-2 font-light">{blockchainData.token.assetData.description}</span>
+                                                </div>
+                                            )} */}
+                                            {/* {blockchainData.token?.assetData.url && (
+                                                <div>
+                                                    <span className="text-gray-500">Documentation:</span>
+                                                    <a
+                                                        href={blockchainData.token.assetData.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="ml-2 text-blue-600 hover:text-blue-800 text-sm"
+                                                    >
+                                                        View Asset Details <ExternalLink size={12} className="inline" />
+                                                    </a>
+                                                </div>
+                                            )} */}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="bg-white p-6 rounded-lg border border-gray-200">
+                                    <h3 className="text-lg font-light mb-4">Token Information</h3>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <div className="text-2xl font-light mb-1">${project.tokenPrice}</div>
+                                            <div className="text-sm text-gray-500">Price per Token</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-light mb-1">{project.totalTokens || 'N/A'}</div>
+                                            <div className="text-sm text-gray-500">Total Supply</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-light mb-1">{project.tokensSold || '0'}</div>
+                                            <div className="text-sm text-gray-500">Tokens Sold</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-light mb-1">Avalanche Fuji</div>
+                                            <div className="text-sm text-gray-500">Network</div>
+                                        </div>
+                                    </div>
                                     <div className="mt-4 p-3 bg-gray-50 rounded">
                                         <div className="text-sm text-gray-500 mb-1">Token Contract Address:</div>
-                                        <div className="font-mono text-xs break-all">{project.tokenAddress}</div>
+                                        <div className="font-mono text-xs break-all">0x6e1A4aB42b0032679B046A4096be33F91e0242a6</div>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
