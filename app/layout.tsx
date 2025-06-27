@@ -20,14 +20,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <div className="min-h-screen bg-white text-black">
-            <Header />
-            {children}
-            <Footer />
-          </div>
-        </Providers>
+      <body className={inter.className}> 
+          <Providers>
+            <div className="min-h-screen bg-white text-black">
+              <Header />
+              {children}
+              <Footer />
+            </div>
+          </Providers> 
       </body>
     </html>
   );
