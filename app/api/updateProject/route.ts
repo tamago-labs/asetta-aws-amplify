@@ -3,13 +3,15 @@ import { type Schema } from '@/amplify/data/resource';
 import {
     runWithAmplifyServerContext,
     reqResBasedClient,
-} from "../../../../utils/amplify-utils"
+} from "../../../utils/amplify-utils"
 
-export async function PUT(request: NextRequest, response: NextResponse<any>, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, response: NextResponse<any>) {
     try {
+
         // Parse the request body
         const body = await request.json();
         const { 
+        	projectId,
             accessKey,
             status,
             smartContractId,
@@ -24,7 +26,7 @@ export async function PUT(request: NextRequest, response: NextResponse<any>, { p
             deployedAt
         } = body;
 
-        const projectId = params.id;
+        console.log("UPDATE#2",accessKey, status)
 
         // Validate required fields
         if (!accessKey || !status) {
@@ -55,6 +57,8 @@ export async function PUT(request: NextRequest, response: NextResponse<any>, { p
                     contextSpec,
                     { id: projectId }
                 );
+
+                console.log("existingProject:", existingProject)
 
                 if (!existingProject.data) {
                     throw new Error("Project not found");

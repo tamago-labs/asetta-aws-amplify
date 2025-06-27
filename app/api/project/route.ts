@@ -76,7 +76,7 @@ export async function POST(request: NextRequest, response: NextResponse<any>) {
                 return entry;
             },
         });
- 
+
         return new NextResponse(JSON.stringify({
             status: "success",
             message: "RWA Project created successfully",
