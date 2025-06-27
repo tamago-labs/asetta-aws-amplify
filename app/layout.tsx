@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Asetta - Multi-Agent RWA Tokenization Platform",
-  description: "Revolutionizing real-world asset tokenization through multi-agent AI automation. Deploy complete RWA projects in minutes with specialized AI agents handling tokenization, legal compliance, and KYC.",
+  description: "Revolutionizing real-world asset tokenization through multi-agent AI automation. Deploy complete RWA projects in minutes with specialized AI agents handling tokenization, legal compliance, and KYC across multiple chains.",
 };
 
 export default function RootLayout({

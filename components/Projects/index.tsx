@@ -1,12 +1,20 @@
 "use client"
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Filter, TrendingUp, MapPin, Calendar, Building, Loader2 } from 'lucide-react';
 import PageHeader from './PageHeader';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource'; 
-import { getCurrentUser, signIn } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { 
+    formatValue, 
+    formatTokenCount, 
+    calculateTokensSoldPercentage, 
+    getCategoryIcon, 
+    getStatusColor, 
+    getStatusLabel 
+} from '@/utils/formatters';
 
 // Configure the data client
 const client = generateClient<Schema>();
@@ -39,6 +47,8 @@ const ProjectsContainer = () => {
                 const { data: projectsData, errors } = await client.models.Project.list({
                     authMode: isLoggedIn ? 'userPool'  : "iam"
                 });
+
+                console.log("projectsData : ", projectsData)
  
                 if (errors) {
                     console.error('GraphQL errors:', errors);
@@ -92,75 +102,6 @@ const ProjectsContainer = () => {
                     return 0;
             }
         });
-
-    const calculateTokensSoldPercentage = (tokensSold: string = '0', totalTokens: string = '0') => {
-        const sold = parseInt(tokensSold);
-        const total = parseInt(totalTokens);
-        return total > 0 ? Math.round((sold / total) * 100) : 0;
-    };
-
-    const formatTokenCount = (count: string = '0') => {
-        const num = parseInt(count);
-        if (num >= 1000000) {
-            return `${(num / 1000000).toFixed(1)}M`;
-        } else if (num >= 1000) {
-            return `${(num / 1000).toFixed(0)}K`;
-        }
-        return num.toString();
-    };
-
-    const formatValue = (value: string) => {
-        // If it's already formatted with $ or M, return as is
-        if (value.includes('$') || value.includes('M')) {
-            return value;
-        }
-        // Otherwise format as currency
-        const num = parseInt(value);
-        if (num >= 1000000) {
-            return `$${(num / 1000000).toFixed(1)}M`;
-        } else if (num >= 1000) {
-            return `$${(num / 1000).toFixed(0)}K`;
-        }
-        return `$${num.toLocaleString()}`;
-    };
-
-    const getStatusColor = (status: string = 'PREPARE') => {
-        switch (status.toUpperCase()) {
-            case 'ACTIVE': return 'bg-green-100 text-green-800';
-            case 'LAUNCHING_SOON': return 'bg-blue-100 text-blue-800';
-            case 'COMPLETED': return 'bg-gray-100 text-gray-800';
-            case 'PREPARE': return 'bg-yellow-100 text-yellow-800';
-            case 'PAUSED': return 'bg-orange-100 text-orange-800';
-            case 'CANCELLED': return 'bg-red-100 text-red-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getStatusLabel = (status: string = 'PREPARE') => {
-        switch (status.toUpperCase()) {
-            case 'LAUNCHING_SOON': return 'Launching Soon';
-            default: return status.charAt(0) + status.slice(1).toLowerCase();
-        }
-    };
-
-    const getCategoryIcon = (category: string = 'COMMERCIAL') => {
-        switch (category.toUpperCase()) {
-            case 'COMMERCIAL': return '🏢';
-            case 'RESIDENTIAL': return '🏠';
-            case 'MIXED_USE': return '🏗️';
-            case 'INDUSTRIAL': return '🏭';
-            case 'RETAIL': return '🛍️';
-            case 'TREASURY': return '🏛️';
-            case 'CORPORATE_BOND': return '💼';
-            case 'MUNICIPAL_BOND': return '🏛️';
-            case 'GOVERNMENT_BOND': return '🏛️';
-            case 'PRECIOUS_METALS': return '🥇';
-            case 'ENERGY': return '⚡';
-            case 'AGRICULTURE': return '🌾';
-            case 'INDUSTRIAL_METALS': return '⚙️';
-            default: return '🏢';
-        }
-    };
 
     if (loading) {
         return (

@@ -1,25 +1,67 @@
+"use client"
+
 import Link from 'next/link';
-import { mockProjects } from "../../data/mockData"
+import { useState, useEffect } from 'react';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '@/amplify/data/resource';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { 
+    formatValue, 
+    formatTokenCount, 
+    calculateTokensSoldPercentage, 
+    getCategoryIcon, 
+    getStatusColor, 
+    getStatusLabel 
+} from '@/utils/formatters';
+
+const client = generateClient<Schema>();
 
 const ActiveProjects = () => {
+    const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     
-    const activeProjects = mockProjects.filter(p => p.status === 'Active').slice(0, 3);
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                let isLoggedIn = false;
+                try {
+                    const { username } = await getCurrentUser();
+                    isLoggedIn = username !== undefined;
+                } catch (e) {}
 
-    const calculateTokensSoldPercentage = (tokensSold: string, totalTokens: string) => {
-        const sold = parseInt(tokensSold);
-        const total = parseInt(totalTokens);
-        return total > 0 ? Math.round((sold / total) * 100) : 0;
-    };
+                const { data: projectsData } = await client.models.Project.list({
+                    authMode: isLoggedIn ? 'userPool' : "iam"
+                });
 
-    const formatTokenCount = (count: string) => {
-        const num = parseInt(count);
-        if (num >= 1000000) {
-            return `${(num / 1000000).toFixed(1)}M`;
-        } else if (num >= 1000) {
-            return `${(num / 1000).toFixed(0)}K`;
-        }
-        return num.toString();
-    };
+                if (projectsData) {
+                    setProjects(projectsData);
+                }
+            } catch (err) {
+                console.error('Error fetching projects:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProjects();
+    }, []);
+    
+    const activeProjects = projects.filter(p => p.status === 'ACTIVE').slice(0, 3);
+    
+    if (loading) {
+        return (
+            <section className="py-20 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex justify-center items-center h-64">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                            <p className="text-gray-600">Loading projects...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="py-20 px-6">
@@ -44,32 +86,32 @@ const ActiveProjects = () => {
                             <Link key={project.id} href={`/project/${project.id}`} className="block">
                                 <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-400 transition-colors">
                                     <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-6xl relative">
-                                        {project.image}
+                                        {project.previewImage || getCategoryIcon(project.category)}
                                         <div className="absolute top-4 right-4">
-                                            <span className="px-2 py-1 text-xs font-light rounded bg-green-100 text-green-800">
-                                                {project.status}
+                                            <span className={`px-2 py-1 text-xs font-light rounded ${getStatusColor(project.status)}`}>
+                                                {getStatusLabel(project.status)}
                                             </span>
                                         </div>
                                         <div className="absolute top-4 left-4">
                                             <span className="px-2 py-1 text-xs font-light rounded bg-white/90 text-gray-700">
-                                                {project.category}
+                                                {project.category?.replace('_', ' ') || 'Commercial'}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="p-6">
                                         <h3 className="text-xl font-light mb-2">{project.name}</h3>
                                         <p className="text-sm text-gray-600 font-light mb-1">{project.type}</p>
-                                        <p className="text-sm text-gray-500 font-light mb-4 line-clamp-2">
-                                            {project.description.substring(0, 120)}...
+                                        <p className="text-sm text-gray-500 font-light mb-4">
+                                            {project.location}
                                         </p>
 
                                         <div className="grid grid-cols-2 gap-4 mb-4">
                                             <div>
-                                                <div className="text-lg font-light">{project.value}</div>
+                                                <div className="text-lg font-light">{formatValue(project.value)}</div>
                                                 <div className="text-xs text-gray-500 uppercase tracking-wide">Asset Value</div>
                                             </div>
                                             <div>
-                                                <div className="text-lg font-light text-green-600">{project.yieldRate}</div>
+                                                <div className="text-lg font-light text-green-600">{project.yieldRate || 'N/A'}</div>
                                                 <div className="text-xs text-gray-500 uppercase tracking-wide">Annual Yield</div>
                                             </div>
                                         </div>

@@ -61,7 +61,7 @@ const PageHeader = ({
     const activeProjectsCount = mockProjects.filter(p => p.status === 'Active').length;
 
     return (
-        <section className="py-16 pt-8 px-6">
+        <section className="py-16 pt-8 px-6 pb-8">
             <div className="max-w-7xl mx-auto">
                 <Breadcrumb items={[
                     { label: 'Home', href: '/' },
@@ -125,26 +125,7 @@ const PageHeader = ({
                         </select>
                     </div>
                 </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                    <div>
-                        <div className="text-3xl font-extralight mb-2">{activeProjectsCount}</div>
-                        <div className="text-sm text-gray-600 font-light">Active Projects</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-extralight mb-2">${totalValue.toFixed(1)}M</div>
-                        <div className="text-sm text-gray-600 font-light">Total Asset Value</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-extralight mb-2">{averageYield.toFixed(1)}%</div>
-                        <div className="text-sm text-gray-600 font-light">Average Yield</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-extralight mb-2">{averageOccupancy.toFixed(0)}%</div>
-                        <div className="text-sm text-gray-600 font-light">Avg. Occupancy</div>
-                    </div>
-                </div>
+ 
             </div>
         </section>
     )
