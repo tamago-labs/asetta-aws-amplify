@@ -70,7 +70,7 @@ const ActiveProjects = () => {
                     <div>
                         <h2 className="text-4xl font-extralight mb-4 tracking-tight">Active RWA Projects</h2>
                         <p className="text-lg font-light text-gray-600">
-                            Explore tokenized real-world assets from real estate to commodities and beyond
+                        Explore tokenized real-world assets published by Asetta RWA Studio
                         </p>
                     </div>
                     <Link href="/projects" className="text-sm font-light hover:text-gray-600 transition-colors border-b border-gray-300">

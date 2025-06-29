@@ -13,21 +13,29 @@ const Hero = () => {
                     AWS-powered multi-agent platform deploying complete RWA projects in minutes across multiple chains using specialized AI agents and Chainlink CCIP
                 </p>
                 <div className="mb-8">
-                    <div className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white">
+                    <div className="inline-flex max-w-lg items-center px-4 py-2 border border-gray-300 rounded-md bg-white">
                         <span className="text-xs md:text-sm font-light text-gray-700">
-                         💬 Chat deployed to Avalanche Fuji, Polygon Mumbai, BNB Testnet at once
+                            💬 Chat to deploy Chainlink's CCT tokens for RWA on Avalanche, Ethereum and Arbitrum Testnets at once
                         </span>
                     </div>
                 </div>
                 <div className="flex justify-center gap-4">
-                    <Link href="/projects" className="bg-black text-white px-8 py-4 text-sm font-light hover:bg-gray-800 transition-colors">
-                        Explore Projects
+                    <Link href="#download" className="bg-black text-white px-8 py-4 text-sm font-light hover:bg-gray-800 transition-colors">
+                        Download RWA Studio
                     </Link>
-                    <Link href="https://github.com/tamago-labs/asetta" target='_blank'>
+                    <Link href="/projects" >
+                        <button className="border border-gray-300 cursor-pointer text-black px-8 py-4 text-sm font-light hover:bg-gray-50 transition-colors">
+                            Explore Projects
+                        </button>
+                    </Link>
+                    {/* <Link href="/projects" className="bg-black text-white px-8 py-4 text-sm font-light hover:bg-gray-800 transition-colors">
+                        Explore Projects
+                    </Link> */}
+                    {/* <Link href="https://github.com/tamago-labs/asetta" target='_blank'>
                         <button className="border border-gray-300 cursor-pointer text-black px-8 py-4 text-sm font-light hover:bg-gray-50 transition-colors">
                             Learn More
                         </button>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </section>

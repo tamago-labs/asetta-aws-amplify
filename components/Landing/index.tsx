@@ -22,20 +22,20 @@ const LandingContainer = () => {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         <div>
-                            <h3 className="text-3xl font-light mb-2">2min</h3>
+                            <h3 className="text-3xl font-light mb-2">5 mins</h3>
                             <p className="text-gray-600 text-sm">Average Deploy Time</p>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-light mb-2">5+</h3>
+                            <h3 className="text-3xl font-light mb-2">4+</h3>
                             <p className="text-gray-600 text-sm">AI Agents Working</p>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-light mb-2">Multi-Chain</h3>
-                            <p className="text-gray-600 text-sm">Blockchain Support</p>
+                            <h3 className="text-3xl font-light mb-2">40+</h3>
+                            <p className="text-gray-600 text-sm">MCP Tools Connected</p>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-light mb-2">AWS</h3>
-                            <p className="text-gray-600 text-sm">Enterprise Infrastructure</p>
+                            <h3 className="text-3xl font-light mb-2">AWS Bedrock</h3>
+                            <p className="text-gray-600 text-sm">Powered By</p>
                         </div>
                     </div>
                 </div>
