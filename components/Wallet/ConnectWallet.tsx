@@ -13,7 +13,7 @@ export function ConnectWallet({ projectData }: ConnectWalletProps) {
   const { address, isConnected, chain } = useAccount()
   const { data: ensName } = useEnsName({ address })
   const { data: balance } = useBalance({ address })
-  const { connect, connectors, error, isLoading, pendingConnector } = useConnect()
+  const { connect, connectors, error } = useConnect()
   const { disconnect } = useDisconnect()
   const { switchChain } = useSwitchChain()
   const [showDropdown, setShowDropdown] = useState(false)
@@ -187,14 +187,12 @@ export function ConnectWallet({ projectData }: ConnectWalletProps) {
       {connectors.map((connector) => (
         <button
           key={connector.uid}
-          onClick={() => connect({ connector })}
-          disabled={isLoading}
+          onClick={() => connect({ connector })} 
           className="flex items-center gap-3 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-black hover:bg-gray-50 transition-colors text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Wallet size={16} />
           <span>
-            {connector.name}
-            {isLoading && pendingConnector?.uid === connector.uid && ' (connecting)'}
+            {connector.name} 
           </span>
         </button>
       ))}

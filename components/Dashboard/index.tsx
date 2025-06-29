@@ -21,29 +21,13 @@ import {
     Settings,
     Bell,
     Monitor
-} from 'lucide-react';
-import { useWallet } from '@/hooks/useWallet';
+} from 'lucide-react'; 
 import { UserProfile, PortfolioInvestment, CreatedProject, RWAToken } from '@/types/dashboard';
 import PortfolioAnalytics from './PortfolioAnalytics';
 import CreateProjectModal from './CreateProjectModal';
 import WalletButton from './WalletButton';
 import { AccountContext } from '@/contexts/account';
-
-
-
-// Mock data - in real app this would come from AWS Amplify
-const mockUserProfile: UserProfile = {
-    id: 'user123',
-    username: 'john_investor',
-    firstName: 'John',
-    lastName: 'Smith',
-    email: 'john.smith@example.com',
-    phone: '+1-555-0123',
-    dateOfBirth: '1985-03-15',
-    nationality: 'United States',
-    walletAddress: '0x742d35Cc6542C4532CdA80e0b4eC5b16a9f5f2C1',
-    accessKey: 'ak_live_7f8a9b2c3d4e5f6g7h8i9j0k'
-};
+ 
 
 const mockPortfolio: PortfolioInvestment[] = [
     {
@@ -117,32 +101,19 @@ const DashboardContainer = () => {
     const [editForm, setEditForm] = useState<any>();
     const [activeTab, setActiveTab] = useState('portfolio');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-    const {
-        isConnected: isWalletConnected,
-        address: walletAddress,
-        connectWallet,
-        formatAddress,
-        isConnecting
-    } = useWallet();
+ 
 
     useEffect(() => {
         profile && setEditForm(profile)
     }, [profile])
-
-    // const totalPortfolioValue = mockPortfolio.reduce((sum, item) => sum + item.currentValue, 0);
-    // const totalInvested = mockPortfolio.reduce((sum, item) => sum + item.totalInvested, 0);
-    // const totalROI = ((totalPortfolioValue - totalInvested) / totalInvested * 100);
+ 
 
     const handleSaveProfile = useCallback(async () => {
         setIsEditing(false);
         console.log("edit form:", editForm)
         await saveProfile(profile.id, editForm)
     }, [profile, editForm])
-
-    const handleConnectWallet = async () => {
-        await connectWallet();
-    };
+ 
 
     const handleCreateProject = (projectData: any) => {
         // In real app, this would call AWS Amplify API
