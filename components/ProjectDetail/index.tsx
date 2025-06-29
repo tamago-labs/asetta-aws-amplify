@@ -124,11 +124,11 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
     }
 
     const assetMetadata = parseAssetMetadata(project.assetMetadata);
-
-    console.log("blockchainData:", blockchainData)
+ 
 
     return (
         <div className="h-screen flex">
+            
             {/* Left Side - Project Details */}
             <div className="w-1/2 bg-gray-50 overflow-y-auto">
                 {/* Hero Section */}
@@ -701,7 +701,7 @@ const ProjectDetailContainer = ({ id }: IProjectDetails) => {
                     <>
                         {/* Chat Header */}
                         <div className="bg-white p-6 border-b border-gray-200 flex-shrink-0">
-                            <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">AI Investment Assistant</div>
+                            <div className="text-xl font-light text-gray-800 mb-2 tracking-tight">Your AI Assistant</div>
                             <div className="text-sm text-gray-500 font-light">Get help with investment questions, KYC, and token purchases</div>
                         </div>
 

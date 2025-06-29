@@ -70,7 +70,7 @@ const PageHeader = ({
 
                 <h1 className="text-5xl font-extralight mb-4 tracking-tight">RWA Projects</h1>
                 <p className="text-xl font-light text-gray-600 mb-8 max-w-2xl">
-                Explore and invest in tokenized real-world assets published by Asetta RWA Studio using Multi-Agent Collaborative
+                Explore and invest in tokenized real-world assets published by Asetta RWA Studio with AI agents expert in each field
                 </p>
 
                 {/* Search and Filters */}

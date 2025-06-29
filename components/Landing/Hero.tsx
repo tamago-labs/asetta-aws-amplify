@@ -15,7 +15,7 @@ const Hero = () => {
                 <div className="mb-8">
                     <div className="inline-flex max-w-lg items-center px-4 py-2 border border-gray-300 rounded-md bg-white">
                         <span className="text-xs md:text-sm font-light text-gray-700">
-                            💬 Chat to deploy Chainlink's CCT tokens for RWA on Avalanche, Ethereum and Arbitrum Testnets at once
+                        💬 Chat to deploy RWA tokens on Avalanche, Ethereum and Arbitrum Testnets at once
                         </span>
                     </div>
                 </div>

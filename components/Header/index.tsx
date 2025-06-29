@@ -31,7 +31,7 @@ const Header = () => {
                         >
                             Projects
                         </Link>
-                        <Link
+                        {/*<Link
                             href="/about"
                             className={`text-sm font-light transition-colors ${pathname === '/about'
                                 ? 'text-black border-b border-black'
@@ -39,7 +39,7 @@ const Header = () => {
                                 }`}
                         >
                             About
-                        </Link>
+                        </Link>*/}
                         <Link
                             href="https://github.com/tamago-labs/asetta"
                             target="_blank"

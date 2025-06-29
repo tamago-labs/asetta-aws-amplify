@@ -180,6 +180,19 @@ const DashboardContainer = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+
+<header className="bg-white border-b border-gray-200">
+  <div className="max-w-7xl mx-auto px-6 py-4">
+    <div className="flex justify-between items-center">
+      <div>
+        <p className="text-sm text-gray-600">
+          <b>Disclaimer:</b> This client-side version is under development and not fully functional. Please use the desktop app for seamless RWA project creation with AI
+        </p>
+      </div>
+    </div>
+  </div>
+</header>
+
             {/* Header */}
             <header className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-6 py-4">

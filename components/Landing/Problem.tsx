@@ -40,7 +40,7 @@ const Problem = () => {
                             </li>
                             <li className="flex items-start">
                                 <span className="text-green-500 mr-3 mt-1">✓</span>
-                                <span>Chainlink for seamless API-to-smart contract sync</span>
+                                <span>Multi-chain native with Chainlink's CCT tokens</span>
                             </li>
                             <li className="flex items-start">
                                 <span className="text-green-500 mr-3 mt-1">✓</span>

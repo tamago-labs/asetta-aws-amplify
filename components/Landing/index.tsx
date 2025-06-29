@@ -22,7 +22,7 @@ const LandingContainer = () => {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         <div>
-                            <h3 className="text-3xl font-light mb-2">5 mins</h3>
+                            <h3 className="text-3xl font-light mb-2">10 mins</h3>
                             <p className="text-gray-600 text-sm">Average Deploy Time</p>
                         </div>
                         <div>
@@ -30,7 +30,7 @@ const LandingContainer = () => {
                             <p className="text-gray-600 text-sm">AI Agents Working</p>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-light mb-2">40+</h3>
+                            <h3 className="text-3xl font-light mb-2">100+</h3>
                             <p className="text-gray-600 text-sm">MCP Tools Connected</p>
                         </div>
                         <div>

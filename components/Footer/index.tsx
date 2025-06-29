@@ -16,11 +16,11 @@ const Footer = () => {
                         <h4 className="font-light mb-4">Platform</h4>
                         <ul className="space-y-2 text-sm font-light text-gray-600">
                             <li><Link href="/projects" className="hover:text-black transition-colors">Browse Projects</Link></li>
-                            <li><Link href="/tokenize" className="hover:text-black transition-colors">Tokenize Assets</Link></li>
-                            <li><Link href="/desktop" className="hover:text-black transition-colors">Desktop App</Link></li>
+                         
+                            <li><Link href="#download" className="hover:text-black transition-colors">Download</Link></li>
                         </ul>
                     </div>
-                    <div>
+                    {/* <div>
                         <h4 className="font-light mb-4">Resources</h4>
                         <ul className="space-y-2 text-sm font-light text-gray-600">
                             <li><Link href="/docs" className="hover:text-black transition-colors">Documentation</Link></li>
@@ -35,7 +35,7 @@ const Footer = () => {
                             <li><Link href="/careers" className="hover:text-black transition-colors">Careers</Link></li>
                             <li><Link href="/contact" className="hover:text-black transition-colors">Contact</Link></li>
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="border-t border-gray-200 mt-12 pt-8 text-center">
                     <p className="text-sm text-gray-600 font-light">
